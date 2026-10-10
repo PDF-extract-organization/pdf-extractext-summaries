@@ -17,7 +17,7 @@ class SummaryService:
             id=uuid4(),
             original_filename=original_filename,
             summary_text=summary_text,
-            created_at=datetime.now(timezone.utc),
+            created_at=_now_in_milliseconds(),
         )
         await self._repository.save(summary)
         return summary
@@ -33,3 +33,10 @@ class SummaryService:
 
     async def is_available(self) -> bool:
         return await self._repository.is_available()
+
+
+def _now_in_milliseconds() -> datetime:
+    """Mongo guarda las fechas con milisegundos: se descarta el resto desde el principio
+    para que la fecha devuelta al crear sea la misma que al leer."""
+    now = datetime.now(timezone.utc)
+    return now.replace(microsecond=now.microsecond // 1000 * 1000)
