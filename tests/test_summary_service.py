@@ -22,6 +22,13 @@ async def test_create_asigna_un_uuid_y_una_fecha_utc(service):
     assert summary.created_at.tzinfo == timezone.utc
 
 
+async def test_create_genera_la_fecha_con_la_precision_de_mongo(service):
+    """Mongo guarda milisegundos: la fecha devuelta al crear debe ser la misma que al leer."""
+    summary = await service.create("doc.pdf", "Un resumen")
+
+    assert summary.created_at.microsecond % 1000 == 0
+
+
 async def test_create_conserva_el_nombre_y_el_texto(service):
     summary = await service.create("doc.pdf", "Un resumen")
 
